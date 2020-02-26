@@ -1,7 +1,7 @@
-Tue Feb 25 18:59:42 EET 2020 : Apache Derby Network Server - 10.10.2.0 - (1582446) started and ready to accept connections on port 1527
+Wed Feb 26 19:21:03 EET 2020 : Apache Derby Network Server - 10.10.2.0 - (1582446) started and ready to accept connections on port 1527
 ----------------------------------------------------------------
-Tue Feb 25 18:59:43 EET 2020:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-0170-7d4a-3efc-ffffbf549886 
+Wed Feb 26 19:21:04 EET 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.10.2.0 - (1582446): instance a816c00e-0170-8284-25d1-ffffbf549886 
 on database directory C:\Users\kmt\Documents\MEGA\Coding\Java\econom\econometricaDB with class loader sun.misc.Launcher$AppClassLoader@1d44bcfa 
 Loaded from file:/C:/Program%20Files/glassfish-4.1.1/javadb/lib/derby.jar
 java.vendor=Oracle Corporation

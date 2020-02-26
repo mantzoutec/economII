@@ -12,6 +12,7 @@ import JPAControllers.CountryJpaController;
 import JPAControllers.CountryDatasetJpaController;
 import JPAControllers.CountryDataJpaController;
 
+
 // import entities
 import econom.entities.Country;
 import econom.entities.CountryData;
@@ -23,14 +24,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -47,19 +56,16 @@ public class econometricaForm extends javax.swing.JFrame {
     CountryDatasetJpaController cdsjc = new CountryDatasetJpaController(emf);
     CountryDataJpaController cdjc = new CountryDataJpaController(emf);
 
-    
-    
     String gdpStart = "https://www.quandl.com/api/v3/datasets/WWDI/";
-    String gdpEnd = "_NY_GDP_MKTP_CN.json?api_key=";
-    
+    String gdpEnd = "_NY_GDP_MKTP_CN.json?api_key=946RzpzmS4GxJKhdLuJ7";
+
     String oilStart = "https://www.quandl.com/api/v3/datasets/BP/OIL_CONSUM_";
-    String oilEnd = ".json?api_key=";
-    
-    String apiKey = "946RzpzmS4GxJKhdLuJ7";
-    
-    String fileLocation = "C:\\Users\\kmt\\Documents\\MEGA\\Coding\\Java\\econom\\iso-countries.csv";
+    String oilEnd = ".json?api_key=946RzpzmS4GxJKhdLuJ7";
 
     
+
+    String fileLocation = "C:\\Users\\kmt\\Documents\\MEGA\\Coding\\Java\\econom\\iso-countries.csv";
+
     public econometricaForm() throws Exception {
         initComponents();
         csvToDatabase();
@@ -89,6 +95,7 @@ public class econometricaForm extends javax.swing.JFrame {
         for (Country c : countries) {
             model.addElement(c.getName());
         }
+       // http://www.java2s.com/Tutorials/Java/javax.swing/JComboBox/1500__JComboBox.setModel_ComboBoxModel_lt_E_gt_aModel_.htm
         countriesComboBox.setModel(model);
 
     }
@@ -112,10 +119,10 @@ public class econometricaForm extends javax.swing.JFrame {
         fetchDataButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        oilConsumptionCountry = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        gdpCountry = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
@@ -157,13 +164,13 @@ public class econometricaForm extends javax.swing.JFrame {
 
         jLabel3.setText("Dataset Name");
 
-        jLabel4.setText("jLabel4");
+        oilConsumptionCountry.setText("jLabel4");
 
         jLabel5.setText("GDP DATA");
 
         jLabel6.setText("Dataset Name");
 
-        jLabel7.setText("jLabel7");
+        gdpCountry.setText("jLabel7");
 
         jLabel8.setText("Availiable Timespan:");
 
@@ -250,11 +257,9 @@ public class econometricaForm extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel10)
@@ -262,7 +267,10 @@ public class econometricaForm extends javax.swing.JFrame {
                                         .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(oilEndDate)
-                                            .addComponent(oilStartDate))))
+                                            .addComponent(oilStartDate)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(oilConsumptionCountry, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
@@ -279,10 +287,11 @@ public class econometricaForm extends javax.swing.JFrame {
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(gdpEndDate)
                                             .addComponent(gdpStartDate)))
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel9)
                                     .addComponent(jLabel6)
-                                    .addComponent(jLabel5))
+                                    .addComponent(jLabel5)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(gdpCountry, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jLabel9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                 .addGap(110, 110, 110))
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -312,15 +321,15 @@ public class econometricaForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel5))
-                .addGap(92, 92, 92)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel7))
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(oilConsumptionCountry)
+                    .addComponent(gdpCountry))
+                .addGap(92, 92, 92)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(jLabel9))
@@ -424,6 +433,7 @@ public class econometricaForm extends javax.swing.JFrame {
     private javax.swing.JButton deleteAllButton;
     private javax.persistence.EntityManager econometricaPUEntityManager;
     private javax.swing.JButton fetchDataButton;
+    private javax.swing.JLabel gdpCountry;
     private javax.swing.JLabel gdpEndDate;
     private javax.swing.JLabel gdpStartDate;
     private javax.swing.JTable gdpTable;
@@ -435,14 +445,13 @@ public class econometricaForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel oilConsumptionCountry;
     private javax.swing.JLabel oilEndDate;
     private javax.swing.JLabel oilStartDate;
     private javax.swing.JTable oilTable;
@@ -453,8 +462,6 @@ public class econometricaForm extends javax.swing.JFrame {
     //
     // METHODS
     // 
-    
-    
     // Reading CSV file, creating a list of instances of class Country.  
     private static List<Country> readCSV(String fileLocation) throws FileNotFoundException, IOException {
 
@@ -476,4 +483,63 @@ public class econometricaForm extends javax.swing.JFrame {
         return countries;
     }
 
+    // library for json manipulation
+    // https://jar-download.com/artifacts/org.glassfish/javax.json/1.1/source-code
+    public JsonObject fetchJSONData(String www) throws MalformedURLException, IOException {
+        
+        // Class URL represents a Uniform Resource Locator, a pointer to a "resource" on the World Wide Web
+        // https://docs.oracle.com/javase/7/docs/api/java/net/URL.html
+        URL url = new URL(www);
+        
+        // Class InputStream
+        // https://docs.oracle.com/javase/7/docs/api/java/io/InputStream.html
+        InputStream is = url.openStream();
+        
+        // Reads a JSON object or an array structure from an input source. 
+        // https://docs.oracle.com/javaee/7/api/javax/json/JsonReader.html
+        JsonReader jsrdr = Json.createReader(is);
+        
+        return jsrdr.readObject();
+    }
+
+    
+    public void fetchFromJSON(String isoCode){
+        
+        
+        JsonObject oc = null;
+        JsonObject gdp = null;
+        
+        try{
+            oc = fetchJSONData(oilStart+isoCode+oilEnd);
+            
+            oilConsumptionCountry.setText(oc.getJsonObject("dataset").getString("name"));
+            oilStartDate.setText(oc.getJsonObject("dataset").getString("oldest_availiable_date"));
+            oilEndDate.setText(oc.getJsonObject("dataset").getString("newest_availiable_date"));
+            JsonArray ocdata = oc.getJsonObject("dataset").getJsonArray("data");
+            
+            for (int i = 0; i < ocdata.size(); i++) {
+                
+                // https://docs.oracle.com/javase/7/docs/api/javax/swing/table/DefaultTableModel.html
+                DefaultTableModel ocmodel = new DefaultTableModel();
+              
+                // Adds a row to the end of the model. 
+                ocmodel.addRow(new String[]{ocdata.getJsonArray(i).get(0).toString().substring(0, 4),
+                                ocdata.getJsonArray(i).get(1).toString()});
+                
+                oilTable.setModel(ocmodel);
+                
+               
+        
+                
+            }
+            
+            
+        }catch(Exception failToFetchDatafromJSON ){
+            
+            
+        }
+        
+    }
+    
+    
 }

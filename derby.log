@@ -12,3 +12,9 @@ os.arch=amd64
 os.version=6.1
 derby.system.home=C:\Users\kmt\Documents\MEGA\Coding\Java\econom
 Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+Wed Feb 26 23:46:53 EET 2020: Shutting down Derby engine
+----------------------------------------------------------------
+Wed Feb 26 23:46:53 EET 2020:
+Shutting down instance a816c00e-0170-8284-25d1-ffffbf549886 on database directory C:\Users\kmt\Documents\MEGA\Coding\Java\econom\econometricaDB with class loader sun.misc.Launcher$AppClassLoader@1d44bcfa 
+----------------------------------------------------------------

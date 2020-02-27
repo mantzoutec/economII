@@ -250,7 +250,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="oilConsumptionCountry">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel4"/>
+        <Property name="text" type="java.lang.String" value="oilConsumptionCountry"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
@@ -265,7 +265,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="gdpCountry">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel7"/>
+        <Property name="text" type="java.lang.String" value="gdpCountry"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel8">
@@ -290,12 +290,12 @@
     </Component>
     <Component class="javax.swing.JLabel" name="oilStartDate">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel12"/>
+        <Property name="text" type="java.lang.String" value="oilStartDate"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="oilEndDate">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel13"/>
+        <Property name="text" type="java.lang.String" value="oilEndDate"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel14">
@@ -310,12 +310,12 @@
     </Component>
     <Component class="javax.swing.JLabel" name="gdpStartDate">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel16"/>
+        <Property name="text" type="java.lang.String" value="gdpStartDate"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="gdpEndDate">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jLabel17"/>
+        <Property name="text" type="java.lang.String" value="gdpEndDate"/>
       </Properties>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">

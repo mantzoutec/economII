@@ -12,7 +12,6 @@ import JPAControllers.CountryJpaController;
 import JPAControllers.CountryDatasetJpaController;
 import JPAControllers.CountryDataJpaController;
 
-
 // import entities
 import econom.entities.Country;
 import econom.entities.CountryData;
@@ -39,6 +38,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -56,13 +58,11 @@ public class econometricaForm extends javax.swing.JFrame {
     CountryDatasetJpaController cdsjc = new CountryDatasetJpaController(emf);
     CountryDataJpaController cdjc = new CountryDataJpaController(emf);
 
-    String gdpStart = "https://www.quandl.com/api/v3/datasets/WWDI/";
-    String gdpEnd = "_NY_GDP_MKTP_CN.json?api_key=946RzpzmS4GxJKhdLuJ7";
-
     String oilStart = "https://www.quandl.com/api/v3/datasets/BP/OIL_CONSUM_";
     String oilEnd = ".json?api_key=946RzpzmS4GxJKhdLuJ7";
 
-    
+    String gdpStart = "https://www.quandl.com/api/v3/datasets/WWDI/";
+    String gdpEnd = "_NY_GDP_MKTP_CN.json?api_key=946RzpzmS4GxJKhdLuJ7";
 
     String fileLocation = "C:\\Users\\kmt\\Documents\\MEGA\\Coding\\Java\\econom\\iso-countries.csv";
 
@@ -95,7 +95,7 @@ public class econometricaForm extends javax.swing.JFrame {
         for (Country c : countries) {
             model.addElement(c.getName());
         }
-       // http://www.java2s.com/Tutorials/Java/javax.swing/JComboBox/1500__JComboBox.setModel_ComboBoxModel_lt_E_gt_aModel_.htm
+        // http://www.java2s.com/Tutorials/Java/javax.swing/JComboBox/1500__JComboBox.setModel_ComboBoxModel_lt_E_gt_aModel_.htm
         countriesComboBox.setModel(model);
 
     }
@@ -164,13 +164,13 @@ public class econometricaForm extends javax.swing.JFrame {
 
         jLabel3.setText("Dataset Name");
 
-        oilConsumptionCountry.setText("jLabel4");
+        oilConsumptionCountry.setText("oilConsumptionCountry");
 
         jLabel5.setText("GDP DATA");
 
         jLabel6.setText("Dataset Name");
 
-        gdpCountry.setText("jLabel7");
+        gdpCountry.setText("gdpCountry");
 
         jLabel8.setText("Availiable Timespan:");
 
@@ -180,17 +180,17 @@ public class econometricaForm extends javax.swing.JFrame {
 
         jLabel11.setText("End Date");
 
-        oilStartDate.setText("jLabel12");
+        oilStartDate.setText("oilStartDate");
 
-        oilEndDate.setText("jLabel13");
+        oilEndDate.setText("oilEndDate");
 
         jLabel14.setText("Start Date");
 
         jLabel15.setText("End Date");
 
-        gdpStartDate.setText("jLabel16");
+        gdpStartDate.setText("gdpStartDate");
 
-        gdpEndDate.setText("jLabel17");
+        gdpEndDate.setText("gdpEndDate");
 
         oilTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -367,6 +367,32 @@ public class econometricaForm extends javax.swing.JFrame {
 
     private void fetchDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fetchDataButtonActionPerformed
         // TODO add your handling code here:
+
+        try {
+            //
+            // Fetch Data
+            //
+            String countrySelection = countriesComboBox.getSelectedItem().toString();
+            System.out.println(countriesComboBox.getSelectedItem().toString());
+            Country selectedCountry = new Country();
+
+            List<Country> countries = cjc.findCountryEntities();
+
+            for (Country c : countries) {
+                if (countrySelection.equals(c.getName())) {
+                    selectedCountry = new Country(c.getIsoCode());
+
+                }
+
+            }
+
+            fetchDataButton.setEnabled(true);
+            fetchFromJSON(selectedCountry.getIsoCode());
+
+        } catch (Exception e) {
+
+        }
+
     }//GEN-LAST:event_fetchDataButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
@@ -485,61 +511,102 @@ public class econometricaForm extends javax.swing.JFrame {
 
     // library for json manipulation
     // https://jar-download.com/artifacts/org.glassfish/javax.json/1.1/source-code
-    public JsonObject fetchJSONData(String www) throws MalformedURLException, IOException {
-        
+    private JsonObject fetchJSONData(String www) throws MalformedURLException, IOException {
+
         // Class URL represents a Uniform Resource Locator, a pointer to a "resource" on the World Wide Web
         // https://docs.oracle.com/javase/7/docs/api/java/net/URL.html
         URL url = new URL(www);
-        
+
         // Class InputStream
         // https://docs.oracle.com/javase/7/docs/api/java/io/InputStream.html
         InputStream is = url.openStream();
-        
+
         // Reads a JSON object or an array structure from an input source. 
         // https://docs.oracle.com/javaee/7/api/javax/json/JsonReader.html
         JsonReader jsrdr = Json.createReader(is);
-        
+        System.out.println("created jsdr json object");
         return jsrdr.readObject();
     }
 
-    
-    public void fetchFromJSON(String isoCode){
-        
-        
+    public void fetchFromJSON(String isoCode) throws IOException, Exception {
+
         JsonObject oc = null;
         JsonObject gdp = null;
-        
-        try{
+
+        try {
             oc = fetchJSONData(oilStart+isoCode+oilEnd);
-            
+            System.out.println(oilStart + isoCode + oilEnd);
             oilConsumptionCountry.setText(oc.getJsonObject("dataset").getString("name"));
             oilStartDate.setText(oc.getJsonObject("dataset").getString("oldest_availiable_date"));
             oilEndDate.setText(oc.getJsonObject("dataset").getString("newest_availiable_date"));
-            JsonArray ocdata = oc.getJsonObject("dataset").getJsonArray("data");
-            
-            for (int i = 0; i < ocdata.size(); i++) {
-                
+            System.out.println(oc.getJsonObject("dataset").getString("newest_availiable_date"));
+            JsonArray ocData = oc.getJsonObject("dataset").getJsonArray("data");
+
+            for (int i = 0; i < ocData.size(); i++) {
+
                 // https://docs.oracle.com/javase/7/docs/api/javax/swing/table/DefaultTableModel.html
-                DefaultTableModel ocmodel = new DefaultTableModel();
-              
+                DefaultTableModel ocModel = new DefaultTableModel();
+                ocModel.setColumnIdentifiers(new String[]{"Year", "Value"});
+
                 // Adds a row to the end of the model. 
-                ocmodel.addRow(new String[]{ocdata.getJsonArray(i).get(0).toString().substring(0, 4),
-                                ocdata.getJsonArray(i).get(1).toString()});
-                
-                oilTable.setModel(ocmodel);
-                
-               
-        
-                
+                ocModel.addRow(new String[]{ocData.getJsonArray(i).get(0).toString().substring(0, 4),
+                    ocData.getJsonArray(i).get(1).toString()});
+
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                oilTable.setDefaultRenderer(Object.class, centerRenderer);
+
+                oilTable.setModel(ocModel);
+
             }
-            
-            
-        }catch(Exception failToFetchDatafromJSON ){
-            
-            
+
+        } catch (Exception failToFetchDatafromJSON) {
+            JOptionPane.showMessageDialog(null, "Oil data for" + oc.getJsonObject("dataset").getString("name")
+                    + " no exist.");
+            // reset oilTable
+            DefaultTableModel ocModel = new DefaultTableModel();
+            oilConsumptionCountry.setText("");
+            oilStartDate.setText("");
+            oilEndDate.setText("");
+
         }
-        
+
+        try {
+            gdp = fetchJSONData(gdpStart + isoCode + gdpEnd);
+
+            gdpCountry.setText(oc.getJsonObject("dataset").getString("name"));
+            gdpStartDate.setText(oc.getJsonObject("dataset").getString("oldest_availiable_date"));
+            gdpEndDate.setText(oc.getJsonObject("dataset").getString("newest_availiable_date"));
+            JsonArray gdpData = oc.getJsonObject("dataset").getJsonArray("data");
+
+            for (int i = 0; i < gdpData.size(); i++) {
+
+                // https://docs.oracle.com/javase/7/docs/api/javax/swing/table/DefaultTableModel.html
+                DefaultTableModel gdpModel = new DefaultTableModel();
+
+                // Adds a row to the end of the model. 
+                gdpModel.addRow(new String[]{gdpData.getJsonArray(i).get(0).toString().substring(0, 4),
+                    gdpData.getJsonArray(i).get(1).toString()});
+
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+                gdpTable.setDefaultRenderer(Object.class, centerRenderer);
+
+                gdpTable.setModel(gdpModel);
+
+            }
+
+        } catch (Exception failToFetchDatafromJSON) {
+            JOptionPane.showMessageDialog(null, gdp.getJsonObject("dataset").getString("name")
+                    + " data no exist.");
+            // reset oilTable
+            DefaultTableModel gdpModel = new DefaultTableModel();
+            gdpCountry.setText("");
+            gdpStartDate.setText("");
+            gdpEndDate.setText("");
+
+        }
+
     }
-    
-    
+
 }
